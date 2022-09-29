@@ -5,9 +5,14 @@
 #include "wsTransponder.h"
 #include "UDPAccepter.h"
 #include "DataDefine.h"
+#include "LocationAgent.h"
 
 
 IWebSocket::wsHandler wsTransponder::ws;
+namespace Situation {
+	extern LocationAgent agent_server;
+}
+
 
 
 void wsTransponder::sendToDeephub()
@@ -21,20 +26,39 @@ void wsTransponder::sendToDeephub()
 	/// 通过条件变量等待位置信息队列中有数据
 	while (true)
 	{
-		std::unique_lock <std::mutex> lck(Situation::mtx);
-		while (!Situation::flag)
+		if (NULL != ws)
 		{
-			Situation::cv.wait(lck);
+			std::unique_lock <std::mutex> lck(Situation::mtx);
+			while (!Situation::flag)
+			{
+				Situation::cv.wait(lck);
+			}
+
+			ws->send(makeBody(Situation::pos_queue.front()));
+			if (ws->getState() != IWebSocket::States::CLOSED)
+			{
+				ws->poll();
+				ws->dispatch(handle_message);
+
+				Situation::pos_queue.pop();
+				Situation::flag = false;
+			}
+			else
+			{
+				delete ws;
+				ws = NULL;
+				ws = IWebSocket::connect(Situation::agent_server.cfg.getConfigStringItem("deephub_url"));
+				if (NULL == ws)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			ws = IWebSocket::connect(Situation::agent_server.cfg.getConfigStringItem("deephub_url"));
 		}
 
-		ws->send(makeBody(Situation::pos_queue.front()));
-		if (ws->getState() != IWebSocket::States::CLOSED)
-		{
-			ws->poll();
-			ws->dispatch(handle_message);
-		}
-		Situation::pos_queue.pop();
-		Situation::flag = false;
 	}
 }
 
