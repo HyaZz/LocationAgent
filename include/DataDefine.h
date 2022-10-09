@@ -76,5 +76,4 @@ namespace Situation {
 	extern std::condition_variable cv;
 	extern bool flag;
 	extern std::mutex mtx;
-	extern std::string receive_message;
 }

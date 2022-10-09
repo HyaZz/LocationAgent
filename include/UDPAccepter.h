@@ -33,6 +33,11 @@ public:
 
 	static void splitTokenToList(std::string& raw_string, std::vector<std::string>& strings, char separator);
 
+	static void handle_message(const std::string& message);
+
+public:
+	static std::string receive_message;
+
 private:
 	char* recv_buff;
 	uint32_t buff_size;

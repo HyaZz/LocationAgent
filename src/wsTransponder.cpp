@@ -6,6 +6,8 @@
 #include "UDPAccepter.h"
 #include "DataDefine.h"
 #include "LocationAgent.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
 
 
 IWebSocket::wsHandler wsTransponder::ws;
@@ -17,12 +19,6 @@ namespace Situation {
 
 void wsTransponder::sendToDeephub()
 {
-	/// 回调函数，通知udpAccepter
-	auto handle_message = [&](const std::string& message)
-	{
-		if (!message.empty()) { Situation::receive_message = message; }
-	};
-
 	/// 通过条件变量等待位置信息队列中有数据
 	while (true)
 	{
@@ -34,11 +30,11 @@ void wsTransponder::sendToDeephub()
 				Situation::cv.wait(lck);
 			}
 
-			ws->send(makeBody(Situation::pos_queue.front()));
+			ws->send(makeJsonMessageBody(Situation::pos_queue.front()));
 			if (ws->getState() != IWebSocket::States::CLOSED)
 			{
 				ws->poll();
-				ws->dispatch(handle_message);
+				ws->dispatch(UDPAccepter::handle_message);
 
 				Situation::pos_queue.pop();
 				Situation::flag = false;
@@ -81,33 +77,58 @@ bool wsTransponder::startServer(const std::string& url)
 }
 
 /*
- *  按deephub接收的报文形式拼接json字符串
- *  后续引入json库来处理
+ *  按deephub接收的报文形式组装json字符串
+ *  形式如下：
+ *  {
+ *      "event": "message",
+ *      "topic": "location_updates",
+ *      "payload": [
+ *      {
+ *          "position": {
+ *              "type": "Point",
+ *              "coordinates": [
+ *                  5,
+ *                  4
+ *              ]
+ *          },
+ *          "source": "fdb6df62-bce8-6c23-e342-80bd5c938774",
+ *          "provider_type": "uwb",
+ *          "provider_id": "77:4f:34:69:27:40"
+ *      }
+ *    ]
+ *  }
  **/
-std::string wsTransponder::makeBody(PostionData& postion)
+std::string wsTransponder::makeJsonMessageBody(PostionData& postion)
 {
-	auto front = R"(
-		{
-			"event": "message",
-				"topic" : "location_updates",
-				"subscription_id" : 1252,
-				"payload" : [
-			{
-				"position": {
-					"type": "Point",
-						"coordinates" : [
-							)";
+	rapidjson::StringBuffer json_str;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> jRoot(json_str);
 
-	auto back = R"(
-						]
-				},
-					"source": "dcd1fb23-9c7b-42af-984a-b733e24b1846",
-								"provider_type" : "uwb",
-								"provider_id" : "ming1368"
-			}
-				]
-		})";
+	jRoot.StartObject();
+	jRoot.Key("event"); jRoot.String("message");
+	jRoot.Key("topic"); jRoot.String("location_updates");
 
-	return (front + std::to_string(postion.pos.x) + "," + std::to_string(postion.pos.y) + back);
+	jRoot.Key("payload");
+	jRoot.StartArray();
+	jRoot.StartObject();
+
+	jRoot.Key("position");
+	jRoot.StartObject();
+	jRoot.Key("type"); jRoot.String("Point");
+	jRoot.Key("coordinates");
+	jRoot.StartArray();
+	jRoot.Int(postion.pos.x);
+	jRoot.Int(postion.pos.y);
+	jRoot.EndArray();
+	jRoot.EndObject();
+
+	jRoot.Key("source"); jRoot.String("dcd1fb23-9c7b-42af-984a-b733e24b1846");
+	jRoot.Key("provider_type"); jRoot.String("uwb");
+	jRoot.Key("provider_id"); jRoot.String("ming1368");
+	jRoot.EndObject();
+	jRoot.EndArray();
+
+	jRoot.EndObject();
+
+	return json_str.GetString();
 }
 

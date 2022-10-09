@@ -19,6 +19,12 @@
     <Filter Include="源文件\src">
       <UniqueIdentifier>{17cf5c37-4973-4111-90b4-ec43ed356a6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\include\rapidjson">
+      <UniqueIdentifier>{5e823b70-dffb-4706-bf6c-b98654f6148c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\include\rapidjson\internal">
+      <UniqueIdentifier>{7a42d8a2-c3d6-44b5-86e3-f78d8d39b0ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -58,6 +64,51 @@
     </ClInclude>
     <ClInclude Include="include\wsTransponder.h">
       <Filter>头文件\include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\document.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\prettywriter.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\stringbuffer.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\stream.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\rapidjson.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\encodings.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\stack.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\swap.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\allocators.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\writer.h">
+      <Filter>头文件\include\rapidjson</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\dtoa.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\itoa.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\strfunc.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\diyfp.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rapidjson\internal\ieee754.h">
+      <Filter>头文件\include\rapidjson\internal</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

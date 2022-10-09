@@ -10,6 +10,8 @@
 #pragma comment(lib, "ws2_32.lib")
 
 
+std::string UDPAccepter::receive_message = {};
+
 bool UDPAccepter::startServer(int port)
 {
 	/// 1.创建UDP socket
@@ -57,11 +59,11 @@ bool UDPAccepter::startServer(int port)
 		Situation::flag = true;
 		Situation::cv.notify_all();
 
-		/// 转发成功，回复客户端，可以不回复
-		if(!Situation::receive_message.empty())
+		if(!receive_message.empty())
 		{
-			sendto(s, Situation::receive_message.c_str(), Situation::receive_message.size(), 0, (SOCKADDR*)&client_addr, len);
+			sendto(s, receive_message.c_str(), receive_message.size(), 0, (SOCKADDR*)&client_addr, len);
 			memset(recv_buff, 0, buff_size);
+			receive_message.clear();
 		}
 
 	} while (ret != SOCKET_ERROR && ret != 0);
@@ -161,3 +163,8 @@ void UDPAccepter::splitTokenToList(std::string& raw_string, std::vector<std::str
 	strings.emplace_back(temp_str);
 }
 
+
+void UDPAccepter::handle_message(const std::string& message)
+{
+	if (!message.empty()) { receive_message = message; }
+}

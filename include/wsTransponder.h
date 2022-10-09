@@ -28,7 +28,7 @@ class wsTransponder {
 public:
 	bool startServer(const std::string& url);
 
-	static std::string makeBody(PostionData& postion);
+	static std::string makeJsonMessageBody(PostionData& postion);
 
 	static void sendToDeephub();
 

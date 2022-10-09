@@ -171,7 +171,7 @@ namespace {
 				/// 但也可能有的websocket服务器收到发来的报文后没有给客户端回复任何消息
 				if (receive_buff.size() < 2) { return; }
 
-				uint8_t* data = (uint8_t*)receive_buff[0];
+				uint8_t* data = (uint8_t*)&receive_buff[0];
 				header.fin = (data[0] & 0x80) == 0x80;
 				header.opcode = static_cast<WebSocketHeader::OpCode>(data[0] & 0x0f);
 				header.mask = (data[1] & 0x80) == 0x80;
@@ -237,7 +237,7 @@ namespace {
 
 						if (header.fin)
 						{
-							//callable(recive_data);
+							callable(recive_data);
 						}
 					}
 				}

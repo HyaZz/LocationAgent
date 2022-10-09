@@ -9,7 +9,6 @@ namespace Situation {
 	std::mutex mtx;
 	std::condition_variable cv;
 	bool flag = false;
-	std::string receive_message;
 }
 
 
