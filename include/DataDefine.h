@@ -59,7 +59,7 @@ class DataQueue
 public:
 	void push(const T& item) { data_quque.push_back(item); }
 
-	void pop() { data_quque.pop_front(); }
+	void pop() { if(!empty()) data_quque.pop_front(); }
 
 	T& front() { return data_quque.front(); }
 

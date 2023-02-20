@@ -23,17 +23,21 @@ struct LocationProvider {
 };
 
 using Providers = std::unordered_map<std::string, LocationProvider>;
+using ProviderIDS = std::unordered_map<std::string, std::string>;
 
 class wsTransponder {
 public:
 	bool startServer(const std::string& url);
 
-	static std::string makeJsonMessageBody(PostionData& postion);
+	void loadProvider();
 
-	static void sendToDeephub();
+	std::string makeJsonMessageBody(PostionData& postion);
+
+	void sendToDeephub();
 
 public:
 	IWebSocket* m_websocket;
-	static IWebSocket::wsHandler ws;
+	IWebSocket::wsHandler ws;
 	Providers map_provider;
+	ProviderIDS map_provider_ids;
 };

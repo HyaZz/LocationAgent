@@ -32,6 +32,7 @@ int LocationAgent::startServer()
 	/// 启动websocket连接服务
 	/// 如果启动失败，LocationAgent自动退化成UDP服务器
 	wsTransponder ws_transponder;
+	ws_transponder.loadProvider();
 	result = ws_transponder.startServer(cfg.getConfigStringItem("deephub_url"));
 
 	/// 启动UDP报文接收服务

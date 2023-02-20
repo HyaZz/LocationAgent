@@ -10,12 +10,16 @@
 #include "rapidjson/prettywriter.h"
 
 
-IWebSocket::wsHandler wsTransponder::ws;
 namespace Situation {
 	extern LocationAgent agent_server;
 }
 
 
+void wsTransponder::loadProvider()
+{
+	/// to do what you want to load
+
+}
 
 void wsTransponder::sendToDeephub()
 {
@@ -70,7 +74,7 @@ bool wsTransponder::startServer(const std::string& url)
 		return false;
 	}
 
-	std::thread th1(&wsTransponder::sendToDeephub);
+	std::thread th1(&wsTransponder::sendToDeephub,this);
 	th1.detach();
 
 	return true;
